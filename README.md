@@ -9,9 +9,8 @@
   Drag a file to the notch, watch it fall into a black hole, drag it back out whenever you need it.
 </p>
 
-<!-- 📸 PLACEHOLDER: screen recording of dragging a file into the notch (the black hole + spiral animation). ~5 s GIF, crop to the top of the screen. -->
 <p align="center">
-  <img src="docs/demo.gif" width="720" alt="Dropping a file into the notch">
+  <img src="docs/demo.gif" width="700" alt="Dropping a file into the notch">
 </p>
 
 ## Features
@@ -22,9 +21,9 @@
 - **Stacks** – files dropped together stay together and come out together.
 - **Out of the way** – no Dock icon, no menu bar icon, starts at login, tiny and native (Swift + SwiftUI).
 
-<!-- 📸 PLACEHOLDER: screenshot of the open shelf with a few files (hover the notch). -->
 <p align="center">
-  <img src="docs/shelf.png" width="480" alt="Open shelf with files">
+  <img src="docs/glow.png" width="49%" alt="Dragging files into the black hole">
+  <img src="docs/shelf.png" width="49%" alt="Open shelf with files">
 </p>
 
 ## Install
@@ -66,9 +65,8 @@ This builds the app, copies it to `/Applications` and launches it.
 
 The shelf only keeps references to your files. Nothing is copied, and the shelf is empty after a restart.
 
-<!-- 📸 PLACEHOLDER: screenshot of the closed notch with files in it (mini black hole on the left, count on the right). -->
 <p align="center">
-  <img src="docs/closed.png" width="360" alt="Closed notch with files">
+  <img src="docs/closed.png" width="360" alt="Closed notch with files: mini black hole and count">
 </p>
 
 ## Good to know
