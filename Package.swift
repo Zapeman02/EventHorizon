@@ -4,5 +4,8 @@ import PackageDescription
 let package = Package(
     name: "EventHorizon",
     platforms: [.macOS(.v14)],
-    targets: [.executableTarget(name: "EventHorizon", path: "Sources")]
+    targets: [
+        .executableTarget(name: "EventHorizon", path: "Sources"),
+        .testTarget(name: "EventHorizonTests", dependencies: ["EventHorizon"], path: "Tests"),
+    ]
 )

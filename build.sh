@@ -1,13 +1,26 @@
 #!/bin/zsh
 # Usage: ./build.sh            -> build/EventHorizon.app
 #        ./build.sh install    -> also installs to /Applications and launches
-#        ./build.sh release    -> universal (Apple Silicon + Intel) build/EventHorizon.zip
+#        ./build.sh release    -> universal (Apple Silicon + Intel) build/EventHorizon.zip + .zip.sig
+#        ./build.sh keygen     -> creates the release signing key in the Keychain (once)
 set -e
 cd "$(dirname "$0")"
 
 APP="build/EventHorizon.app"
 
+if [[ "$1" == "keygen" ]]; then
+    swift scripts/sign.swift keygen
+    echo "Key saved in Keychain as \"EventHorizon Signing Key\". Paste the public key above into releasePublicKey in Sources/UpdateChecker.swift."
+    exit 0
+fi
+
 if [[ "$1" == "release" ]]; then
+    git fetch -q origin main
+    if [[ "$(git branch --show-current)" != "main" || -n "$(git status --porcelain --untracked-files=no)" \
+          || "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
+        echo "Releases are built from main only: check out main, commit everything and pull first." >&2
+        exit 1
+    fi
     swift build -c release --arch arm64 --arch x86_64
     BINARY=".build/apple/Products/Release/EventHorizon"
 else
@@ -35,5 +48,6 @@ fi
 
 if [[ "$1" == "release" ]]; then
     ditto -c -k --keepParent "$APP" build/EventHorizon.zip
-    echo "Packaged build/EventHorizon.zip"
+    swift scripts/sign.swift sign build/EventHorizon.zip > build/EventHorizon.zip.sig
+    echo "Packaged build/EventHorizon.zip and build/EventHorizon.zip.sig. Upload both to the release."
 fi
