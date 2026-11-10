@@ -72,7 +72,7 @@ final class UpdateChecker {
         alert.informativeText = "EventHorizon can look for a newer version on GitHub each time it starts."
         alert.addButton(withTitle: "Check for Updates")
         alert.addButton(withTitle: "Don't Check")
-        NSApp.activate()
+        NSApp.activate(ignoringOtherApps: true)
         return alert.runModal() == .alertFirstButtonReturn
     }
 
@@ -86,13 +86,14 @@ final class UpdateChecker {
 
         let alert = NSAlert()
         alert.messageText = "Update available for EventHorizon"
-        alert.informativeText = "Version \(release.tagName) is out. You have \(current)."
+        alert.informativeText = "v\(current) → \(release.tagName)"
         let zip = release.assets.first { $0.name == "EventHorizon.zip" }
         let signature = release.assets.first { $0.name == "EventHorizon.zip.sig" }
         if zip != nil { alert.addButton(withTitle: "Download & Install") }
         alert.addButton(withTitle: "Open on GitHub")
         alert.addButton(withTitle: "Later")
-        NSApp.activate()
+        centerText(of: alert)
+        NSApp.activate(ignoringOtherApps: true)
 
         let response = alert.runModal()
         let openIndex = zip == nil ? NSApplication.ModalResponse.alertFirstButtonReturn : .alertSecondButtonReturn
@@ -122,6 +123,17 @@ final class UpdateChecker {
         }
     }
 
+    private func centerText(of alert: NSAlert) {
+        alert.layout()
+        func center(in view: NSView) {
+            for subview in view.subviews {
+                (subview as? NSTextField)?.alignment = .center
+                center(in: subview)
+            }
+        }
+        alert.window.contentView.map(center)
+    }
+
     private func warnUnverified(_ releasePage: URL) {
         let alert = NSAlert()
         alert.alertStyle = .warning
@@ -130,7 +142,7 @@ final class UpdateChecker {
             + "You can download it manually from GitHub instead."
         alert.addButton(withTitle: "Download Manually").hasDestructiveAction = true
         alert.addButton(withTitle: "Cancel")
-        NSApp.activate()
+        NSApp.activate(ignoringOtherApps: true)
         if alert.runModal() == .alertFirstButtonReturn { NSWorkspace.shared.open(releasePage) }
     }
 
