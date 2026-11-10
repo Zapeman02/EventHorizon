@@ -51,6 +51,10 @@ private struct SettingsView: View {
                     LoginItem.set(enabled)
                     launchAtLogin = LoginItem.isEnabled
                 }
+            Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?")")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity)
         }
         .formStyle(.grouped)
         .frame(width: 360)
