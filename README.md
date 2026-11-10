@@ -113,10 +113,13 @@ swift test
 
 ### Releasing
 
-1. Once: `./build.sh keygen` creates the signing key in your Keychain (**EventHorizon Signing Key**) and prints the public key. Put it in `releasePublicKey` in `Sources/UpdateChecker.swift`, and back up the private key in a password manager.
-2. Bump `CFBundleShortVersionString` in `Info.plist`.
-3. On an up-to-date `main`, `./build.sh release` builds `build/EventHorizon.zip`, signs it into `build/EventHorizon.zip.sig` and writes the SBOM `build/EventHorizon.sbom.cdx.json`.
-4. Create a GitHub release tagged `v<version>` (e.g. `v2.0`) and upload **all three** files.
+```sh
+./scripts/release.sh
+```
+
+It asks for the new version (prefilled with the next one), merges the version bump into `main` through a pull request once CI passes, then builds, signs and publishes the GitHub release with the zip, its signature and the SBOM. On a Mac without the signing key it first asks you to paste the private key from your password manager, and only saves it if it matches the app's public key.
+
+It needs the GitHub CLI (`gh auth login`). The very first time, `./build.sh keygen` creates the signing key in your Keychain (**EventHorizon Signing Key**) and prints the public key for `releasePublicKey` in `Sources/UpdateChecker.swift`. Back up the private key in a password manager.
 
 ## License
 
