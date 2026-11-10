@@ -1,7 +1,7 @@
 #!/bin/zsh
 # Usage: ./build.sh            -> build/EventHorizon.app
 #        ./build.sh install    -> also installs to /Applications and launches
-#        ./build.sh release    -> universal (Apple Silicon + Intel) build/EventHorizon.zip + .zip.sig
+#        ./build.sh release    -> universal (Apple Silicon + Intel) build/EventHorizon.zip + .zip.sig + .sbom.cdx.json
 #        ./build.sh keygen     -> creates the release signing key in the Keychain (once)
 set -e
 cd "$(dirname "$0")"
@@ -49,5 +49,6 @@ fi
 if [[ "$1" == "release" ]]; then
     ditto -c -k --keepParent "$APP" build/EventHorizon.zip
     swift scripts/sign.swift sign build/EventHorizon.zip > build/EventHorizon.zip.sig
-    echo "Packaged build/EventHorizon.zip and build/EventHorizon.zip.sig. Upload both to the release."
+    python3 scripts/sbom.py "$BINARY" build/EventHorizon.sbom.cdx.json
+    echo "Packaged build/EventHorizon.zip, .zip.sig and .sbom.cdx.json. Upload all three to the release."
 fi
