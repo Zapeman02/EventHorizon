@@ -28,8 +28,6 @@
 
 ## Install
 
-### Option 1: Download (no developer tools needed)
-
 1. Download `EventHorizon.zip` from the [latest release](https://github.com/Zapeman02/EventHorizon/releases/latest).
 2. Unzip it and drag **EventHorizon.app** into your **Applications** folder.
 3. Open it. macOS will say it *can't verify the developer* because the app isn't notarized by Apple.
@@ -39,18 +37,6 @@
    ```sh
    xattr -dr com.apple.quarantine /Applications/EventHorizon.app
    ```
-
-### Option 2: Build from source
-
-Requires Apple's free Command Line Tools (`xcode-select --install`). Full Xcode is not needed.
-
-```sh
-git clone https://github.com/Zapeman02/EventHorizon.git
-cd EventHorizon
-./build.sh install
-```
-
-This builds the app, copies it to `/Applications` and launches it.
 
 ## Usage
 
@@ -64,6 +50,7 @@ This builds the app, copies it to `/Applications` and launches it.
 | Right-click the shelf | Clear shelf / Quit |
 
 The shelf only keeps references to your files. Nothing is copied, and the shelf is empty after a restart.
+
 
 <p align="center">
   <img src="docs/closed.png" width="360" alt="Closed notch with files: mini black hole and count">
@@ -79,6 +66,43 @@ The shelf only keeps references to your files. Nothing is copied, and the shelf 
 ## Uninstall
 
 Quit the app, then delete `/Applications/EventHorizon.app`.
+
+## Updates
+
+The first time you open EventHorizon it asks whether it may check for updates at startup. If you say yes, it looks at the latest release on GitHub each time it starts. Offline? It just skips the check.
+
+When a newer version is out you get three choices:
+
+- **Download & Install** – downloads the new version, replaces the old one and restarts. No "Open Anyway" step needed.
+- **Open on GitHub** – opens the release page so you can download it yourself.
+- **Later** – asks again next time.
+
+Every release is signed with the developer's private key, and the app only installs a download whose signature matches the public key built into it. If the signature is missing or wrong, nothing is installed and you get a warning with the option to download manually instead.
+
+## Build from source
+
+Requires Apple's free Command Line Tools (`xcode-select --install`). Full Xcode is not needed.
+
+```sh
+git clone https://github.com/Zapeman02/EventHorizon.git
+cd EventHorizon
+./build.sh install
+```
+
+This builds the app, copies it to `/Applications` and launches it.
+
+Run the tests with:
+
+```sh
+swift test
+```
+
+### Releasing
+
+1. Once: `./build.sh keygen` creates the signing key in your Keychain (**EventHorizon Signing Key**) and prints the public key. Put it in `releasePublicKey` in `Sources/UpdateChecker.swift`, and back up the private key in a password manager.
+2. Bump `CFBundleShortVersionString` in `Info.plist`.
+3. `./build.sh release` builds `build/EventHorizon.zip` and signs it into `build/EventHorizon.zip.sig`.
+4. Create a GitHub release tagged `v<version>` (e.g. `v2.0`) and upload **both** files.
 
 ## License
 
