@@ -51,6 +51,11 @@ private struct SettingsView: View {
                     LoginItem.set(enabled)
                     launchAtLogin = LoginItem.isEnabled
                 }
+            Section {
+                Link("Report an issue", destination: URL(string: "https://github.com/Zapeman02/EventHorizon/issues/new")!)
+                Link("Report a vulnerability",
+                     destination: URL(string: "https://github.com/Zapeman02/EventHorizon/security/advisories/new")!)
+            }
             Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?")")
                 .font(.caption)
                 .foregroundStyle(.secondary)
