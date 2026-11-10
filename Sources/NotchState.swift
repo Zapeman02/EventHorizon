@@ -1,5 +1,52 @@
 import SwiftUI
 
+enum DragMode: String, CaseIterable {
+    case standard, move, copy
+
+    var title: String {
+        switch self {
+        case .standard: "Default"
+        case .move: "Move"
+        case .copy: "Copy"
+        }
+    }
+
+    var hint: String {
+        switch self {
+        case .standard: "Finder moves on the same disk and copies to other disks and apps"
+        case .move: "Moves in Finder, still copies into apps like browsers"
+        case .copy: "Always copies, the original stays put"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .standard: "cursorarrow.motionlines"
+        case .move: "arrow.right.doc.on.clipboard"
+        case .copy: "doc.on.doc"
+        }
+    }
+
+    var operations: NSDragOperation {
+        switch self {
+        case .standard: [.copy, .move, .generic]
+        case .move: [.move, .copy]
+        case .copy: .copy
+        }
+    }
+
+    static func movedFile(_ operation: NSDragOperation) -> Bool {
+        operation.contains(.move) || operation.contains(.generic)
+    }
+
+    /// ⌥ and ⌘ override the chosen mode while held, matching Finder's own shortcuts.
+    static func held(_ flags: NSEvent.ModifierFlags) -> DragMode? {
+        if flags.contains(.option) { return .copy }
+        if flags.contains(.command) { return .move }
+        return nil
+    }
+}
+
 @MainActor
 final class NotchState: ObservableObject {
     struct Incoming: Identifiable {
@@ -16,6 +63,9 @@ final class NotchState: ObservableObject {
     @Published var isOpen = false
     @Published var isTargeted = false
     @Published var isDraggingOut = false
+    @Published var dragMode = DragMode.standard
+    @Published var heldMode: DragMode?
+    var isMenuOpen = false
     @Published var dragProximity: Double?
     @Published private(set) var incoming: [Incoming] = []
 
@@ -26,6 +76,8 @@ final class NotchState: ObservableObject {
         self.shelf = shelf
         self.notchSize = notchSize
     }
+
+    var activeMode: DragMode { heldMode ?? dragMode }
 
     var isAbsorbing: Bool { !incoming.isEmpty }
 

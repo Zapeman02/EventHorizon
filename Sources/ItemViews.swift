@@ -3,6 +3,7 @@ import SwiftUI
 
 struct ItemView: View {
     let item: ShelfItem
+    let mode: DragMode
     let onRemove: () -> Void
     let onDragChanged: (Bool) -> Void
     @State private var hovering = false
@@ -21,6 +22,7 @@ struct ItemView: View {
         .scaleEffect(hovering ? 1.06 : 1)
         .overlay {
             FileDragSource(urls: item.urls,
+                           mode: mode,
                            onHover: { h in withAnimation(.easeOut(duration: 0.15)) { hovering = h } },
                            onDragChanged: onDragChanged,
                            onRemove: onRemove)

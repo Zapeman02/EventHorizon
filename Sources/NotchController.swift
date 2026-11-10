@@ -91,9 +91,11 @@ final class NotchController {
     }
 
     private func trackMouse() {
+        let held = DragMode.held(NSEvent.modifierFlags)
+        if state.heldMode != held { state.heldMode = held }
         let mouse = NSEvent.mouseLocation
         if state.isOpen {
-            let busy = state.isTargeted || state.isAbsorbing || state.isDraggingOut
+            let busy = state.isTargeted || state.isAbsorbing || state.isDraggingOut || state.isMenuOpen
             if !busy && !shapeRect(open: true).insetBy(dx: -8, dy: -8).contains(mouse) { setOpen(false) }
         } else if !state.shelf.items.isEmpty && NSEvent.pressedMouseButtons == 0 && hoverRect.contains(mouse) {
             setOpen(true)

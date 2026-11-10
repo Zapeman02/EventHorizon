@@ -73,14 +73,58 @@ struct NotchView: View {
         .buttonStyle(.plain)
     }
 
+    private var modeButton: some View {
+        Button {
+            showModeMenu()
+        } label: {
+            HStack(spacing: 2) {
+                if state.activeMode != .standard {
+                    Image(systemName: state.activeMode.icon)
+                }
+                Text(state.activeMode.title)
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 7, weight: .bold))
+            }
+            .font(.system(size: 10, weight: .semibold, design: .rounded))
+            .foregroundStyle(Palette.flare)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .background(Palette.ember.opacity(0.15), in: Capsule())
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .help("Drag mode. Hold ⌥ to copy or ⌘ to move for a single drag.")
+    }
+
+    private func showModeMenu() {
+        let menu = NSMenu()
+        for mode in DragMode.allCases {
+            let item = ActionMenuItem(title: mode.title) { state.dragMode = mode }
+            item.image = NSImage(systemSymbolName: mode.icon, accessibilityDescription: nil)
+            item.state = state.dragMode == mode ? .on : .off
+            item.toolTip = mode.hint
+            menu.addItem(item)
+        }
+        menu.addItem(.separator())
+        let tip = NSMenuItem(title: "Hold ⌥ to copy or ⌘ to move", action: nil, keyEquivalent: "")
+        tip.isEnabled = false
+        menu.addItem(tip)
+        state.isMenuOpen = true
+        menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+        state.isMenuOpen = false
+    }
+
     @ViewBuilder
     private var content: some View {
         if state.isOpen {
             VStack(spacing: 0) {
                 HStack {
-                    Spacer()
                     if !shelf.items.isEmpty && !state.showsVortex {
+                        modeButton.transition(.opacity)
+                        Spacer()
                         clearButton.transition(.opacity)
+                    } else {
+                        Spacer()
                     }
                 }
                 .frame(height: state.notchSize.height)
@@ -126,6 +170,7 @@ struct NotchView: View {
                 HStack(spacing: 8) {
                     ForEach(shelf.items) { item in
                         ItemView(item: item,
+                                 mode: state.dragMode,
                                  onRemove: { withAnimation(.spring(response: 0.35)) { shelf.remove(item) } },
                                  onDragChanged: { state.isDraggingOut = $0 })
                             .transition(.scale(scale: 0.1).combined(with: .opacity))
@@ -146,4 +191,18 @@ private extension NSItemProvider {
             _ = loadObject(ofClass: URL.self) { url, _ in continuation.resume(returning: url) }
         }
     }
+}
+
+private final class ActionMenuItem: NSMenuItem {
+    private let handler: () -> Void
+
+    init(title: String, handler: @escaping () -> Void) {
+        self.handler = handler
+        super.init(title: title, action: #selector(run), keyEquivalent: "")
+        target = self
+    }
+
+    required init(coder: NSCoder) { fatalError("init(coder:) is not used") }
+
+    @objc private func run() { handler() }
 }
