@@ -59,11 +59,14 @@ final class NotchState: ObservableObject {
     nonisolated static let ear: CGFloat = 8
     nonisolated static let wing: CGFloat = 30
     nonisolated static let absorbDuration = 0.65
+    nonisolated static let dragModeKey = "dragMode"
 
     @Published var isOpen = false
     @Published var isTargeted = false
     @Published var isDraggingOut = false
-    @Published var dragMode = DragMode.standard
+    @Published var dragMode = DragMode(rawValue: UserDefaults.standard.string(forKey: dragModeKey) ?? "") ?? .standard {
+        didSet { UserDefaults.standard.set(dragMode.rawValue, forKey: Self.dragModeKey) }
+    }
     @Published var heldMode: DragMode?
     var isMenuOpen = false
     @Published var dragProximity: Double?

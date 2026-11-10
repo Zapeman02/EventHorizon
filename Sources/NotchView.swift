@@ -36,6 +36,7 @@ struct NotchView: View {
             Button("Clear Shelf") { withAnimation { shelf.clear() } }
                 .disabled(shelf.items.isEmpty)
             Divider()
+            Button("Settings…") { SettingsWindow.show(state: state) }
             Button("Quit EventHorizon") { NSApp.terminate(nil) }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
