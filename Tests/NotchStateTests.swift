@@ -2,7 +2,9 @@ import Foundation
 import Testing
 @testable import EventHorizon
 
+/// Serialized: some tests share the saved drag mode in UserDefaults.
 @MainActor
+@Suite(.serialized)
 struct NotchStateTests {
     private let notch = CGSize(width: 200, height: 32)
     private let file = URL(fileURLWithPath: "/tmp/a.pdf")
@@ -22,6 +24,7 @@ struct NotchStateTests {
     }
 
     @Test func heldModeOverridesChosenMode() {
+        UserDefaults.standard.removeObject(forKey: NotchState.dragModeKey)
         let state = NotchState(shelf: Shelf(), notchSize: notch)
         #expect(state.activeMode == .standard)
         state.dragMode = .move
@@ -29,6 +32,12 @@ struct NotchStateTests {
         #expect(state.activeMode == .copy)
         state.heldMode = nil
         #expect(state.activeMode == .move)
+    }
+
+    @Test func dragModeIsRemembered() {
+        NotchState(shelf: Shelf(), notchSize: notch).dragMode = .copy
+        #expect(NotchState(shelf: Shelf(), notchSize: notch).dragMode == .copy)
+        UserDefaults.standard.removeObject(forKey: NotchState.dragModeKey)
     }
 
     @Test func vortexHiddenWhileDraggingOut() {
