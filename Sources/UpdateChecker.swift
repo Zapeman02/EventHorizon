@@ -30,7 +30,7 @@ final class UpdateChecker {
     }
 
     /// Public half of the release signing key. Only the private half in the developer's Keychain can sign updates.
-    private static let releasePublicKey = "PUBLIC_KEY_PLACEHOLDER"
+    private static let releasePublicKey = "3BcReFNX2+kL+rO0PZa51lVuZ8FgWSjCaHTKkv1vK5U="
     private static let githubRelease = URL(string: "https://api.github.com/repos/Zapeman02/EventHorizon/releases/latest")!
     nonisolated static let enabledKey = "checksForUpdates"
 
