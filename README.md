@@ -91,6 +91,8 @@ When a newer version is out you get three choices:
 
 Every release is signed with the developer's private key, and the app only installs a download whose signature matches the public key built into it. If the signature is missing or wrong, nothing is installed and you get a warning with the option to download manually instead.
 
+Security practices, the SBOM and how to report a vulnerability are described in [CRA.md](CRA.md).
+
 ## Build from source
 
 Requires Apple's free Command Line Tools (`xcode-select --install`). Full Xcode is not needed.
@@ -113,8 +115,8 @@ swift test
 
 1. Once: `./build.sh keygen` creates the signing key in your Keychain (**EventHorizon Signing Key**) and prints the public key. Put it in `releasePublicKey` in `Sources/UpdateChecker.swift`, and back up the private key in a password manager.
 2. Bump `CFBundleShortVersionString` in `Info.plist`.
-3. On an up-to-date `main`, `./build.sh release` builds `build/EventHorizon.zip` and signs it into `build/EventHorizon.zip.sig`.
-4. Create a GitHub release tagged `v<version>` (e.g. `v2.0`) and upload **both** files.
+3. On an up-to-date `main`, `./build.sh release` builds `build/EventHorizon.zip`, signs it into `build/EventHorizon.zip.sig` and writes the SBOM `build/EventHorizon.sbom.cdx.json`.
+4. Create a GitHub release tagged `v<version>` (e.g. `v2.0`) and upload **all three** files.
 
 ## License
 
