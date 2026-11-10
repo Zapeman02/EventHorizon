@@ -15,6 +15,12 @@ if [[ "$1" == "keygen" ]]; then
 fi
 
 if [[ "$1" == "release" ]]; then
+    git fetch -q origin main
+    if [[ "$(git branch --show-current)" != "main" || -n "$(git status --porcelain --untracked-files=no)" \
+          || "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
+        echo "Releases are built from main only: check out main, commit everything and pull first." >&2
+        exit 1
+    fi
     swift build -c release --arch arm64 --arch x86_64
     BINARY=".build/apple/Products/Release/EventHorizon"
 else

@@ -113,7 +113,7 @@ swift test
 
 1. Once: `./build.sh keygen` creates the signing key in your Keychain (**EventHorizon Signing Key**) and prints the public key. Put it in `releasePublicKey` in `Sources/UpdateChecker.swift`, and back up the private key in a password manager.
 2. Bump `CFBundleShortVersionString` in `Info.plist`.
-3. `./build.sh release` builds `build/EventHorizon.zip` and signs it into `build/EventHorizon.zip.sig`.
+3. On an up-to-date `main`, `./build.sh release` builds `build/EventHorizon.zip` and signs it into `build/EventHorizon.zip.sig`.
 4. Create a GitHub release tagged `v<version>` (e.g. `v2.0`) and upload **both** files.
 
 ## License
